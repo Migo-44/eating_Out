@@ -36,9 +36,54 @@ mydata <- na.omit(mydata)
 ```
 
 
+```{r include=FALSE,echo=FALSE}
+source(file="fisherXY.R")
+require(tidyverse)
+require(tigerstats)
+require(haven)
+require(knitr)
+require(foreign)
+library(plyr)
+```
+```{r, eval=TRUE, warning=FALSE}
+GSS <-read_dta(file="GSS1998.dta")
+#GSS <- readstata13::read.dta13(file="GSS1998.dta")
+GSS <- droplevels(GSS)
+mydata <- select(GSS,race,age,eatout)
+mydata <- na.omit(mydata)
+
+```
+
+# Methods
+
+Race is Cat
+Eating out is Cat
+Thus we use the Cat~Cat helper file
+
+```{r}
+barchartGC(~race + eatout,data=mydata)
+barchartGC(~race + eatout,data=mydata, type="percent")
+
+```
+Races are white,black, other. Blue represent ate out last week. Orange represents didn't eat out last week.      
+The bar chart shows that white people eat out the most and eat in the least.Black people eat out the least and eat in the most.     
+
+```{r}
+table1 <- xtabs(~race + eatout, data=mydata)
+rowPerc(table1)
+colPerc(table1)
+```
+The numerical shows that 83.11% white people eat out at least once a week and 16.89% don't.   
 
 
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisherXY(mydata$race,mydata$eatout,printAll = T)
+```
 
+The chi square test shows that the p-value is 0.000002287, so we reject $H_0$. So, there is a statistical difference between at least two races with the frequency of eating out.   
 
+The Fisher test has a p-value of of 0.00001183 so there is a statistical difference between white and black people in the frequency of eating out.
 
-
+The
